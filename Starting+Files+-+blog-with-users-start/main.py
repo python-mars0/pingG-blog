@@ -23,8 +23,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 ##CONNECT TO DB
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -38,37 +38,13 @@ gravatar = Gravatar(app,
                     base_url=None)
 ##CONFIGURE TABLES
 
-# class BlogPost(db.Model):
-#     __tablename__ = "blog_posts"
-#     id = db.Column(db.Integer, primary_key=True)
-#     author = db.Column(db.String(250), nullable=False)
-#     title = db.Column(db.String(250), unique=True, nullable=False)
-#     subtitle = db.Column(db.String(250), nullable=False)
-#     date = db.Column(db.String(250), nullable=False)
-#     body = db.Column(db.Text, nullable=False)
-#     img_url = db.Column(db.String(250), nullable=False)
-# # db.create_all()
-#
-# class User(UserMixin, db.Model):
-#     __tablename__ = "users"
-#     id = db.Column(db.Integer, primary_key=True)
-#     email = db.Column(db.String(100), unique=True)
-#     password = db.Column(db.String(100))
-#     name = db.Column(db.String(1000))
-
-# db.create_all()
-
-##### --------------------------- #####
-
 class User(UserMixin, db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
-
     posts = relationship('BlogPost', back_populates='author')
-
     comments = relationship('Comments', back_populates='comment_author')
 
 
