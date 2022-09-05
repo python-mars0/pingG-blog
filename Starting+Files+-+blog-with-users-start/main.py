@@ -19,15 +19,6 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-##CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
 gravatar = Gravatar(app,
                     size=100,
                     rating='g',
@@ -36,6 +27,19 @@ gravatar = Gravatar(app,
                     force_lower=False,
                     use_ssl=False,
                     base_url=None)
+
+##CONNECT TO DB
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def user_loader(user_id):
+    return User.query.get(int(user_id))
+
 ##CONFIGURE TABLES
 
 class User(UserMixin, db.Model):
@@ -76,12 +80,7 @@ class Comments(db.Model):
 
     body = db.Column(db.Text, nullable=False)
 
-# db.create_all()
-
-@login_manager.user_loader
-def user_loader(user_id):
-    return User.query.get(int(user_id))
-
+db.create_all()
 
 def admin_only(f):
     @wraps(f)
